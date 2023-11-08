@@ -1,7 +1,7 @@
 import random
 import math
 import game_framework
-
+import game_world
 from pico2d import *
 
 # zombie Run Speed
@@ -32,9 +32,11 @@ class Zombie:
         self.load_images()
         self.frame = random.randint(0, 9)
         self.dir = random.choice([-1,1])
+        self.scale = 2
 
 
     def update(self):
+
         self.frame = (self.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % FRAMES_PER_ACTION
         self.x += RUN_SPEED_PPS * self.dir * game_framework.frame_time
         if self.x > 1600:
@@ -47,11 +49,19 @@ class Zombie:
 
     def draw(self):
         if self.dir < 0:
-            Zombie.images['Walk'][int(self.frame)].composite_draw(0, 'h', self.x, self.y, 200, 200)
+            Zombie.images['Walk'][int(self.frame)].composite_draw(0, 'h', self.x, self.y-(2-self.scale)*50, self.scale * 100, self.scale * 100)
+            draw_rectangle(*self.get_bb())
         else:
-            Zombie.images['Walk'][int(self.frame)].draw(self.x, self.y, 200, 200)
-
+            Zombie.images['Walk'][int(self.frame)].draw(self.x, self.y-(2-self.scale)*50, self.scale * 100, self.scale * 100)
+            draw_rectangle(*self.get_bb())
 
     def handle_event(self, event):
         pass
+    def handle_collision(self,group, other):
+        if group == 'zombie:throwball':
+            self.scale -= 1
+            if self.scale == 0:
+                game_world.remove_object(self)
+    def get_bb(self):
+        return self.x - self.scale * 30, self.y-(2-self.scale)*50 - self.scale * 50, self.x + self.scale * 30, self.y-(2-self.scale)*50 +self.scale * 50
 

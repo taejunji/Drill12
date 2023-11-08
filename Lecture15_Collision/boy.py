@@ -196,6 +196,7 @@ class Boy:
             self.ball_count -= 1
             ball = Ball(self.x, self.y, self.face_dir*10)
             game_world.add_object(ball)
+            game_world.add_collision_pair('zombie:throwball', None, ball)
 
     def update(self):
         self.state_machine.update()
@@ -206,5 +207,17 @@ class Boy:
     def draw(self):
         self.state_machine.draw()
         self.font.draw(self.x-10, self.y + 50, f'{self.ball_count:02d}', (255, 255, 0))
+        draw_rectangle(*self.get_bb()) # 튜플을 풀어해쳐서 분리해서 인자로 제공
 
-    # fill here
+    def get_bb(self):
+        return self.x-20, self.y -50, self.x +20, self.y+50
+
+    def handle_collision(self,group, other):
+        # 여기
+        if group == 'boy:ball':
+            self.ball_count += 1
+        if group == 'boy:zombie':
+            quit()
+            pass
+
+
