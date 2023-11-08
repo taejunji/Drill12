@@ -62,6 +62,7 @@ class Zombie:
             self.scale -= 1
             if self.scale == 0:
                 game_world.remove_object(self)
+                game_world.remove_collision_object(self)
     def get_bb(self):
         return self.x - self.scale * 30, self.y-(2-self.scale)*50 - self.scale * 50, self.x + self.scale * 30, self.y-(2-self.scale)*50 +self.scale * 50
 
